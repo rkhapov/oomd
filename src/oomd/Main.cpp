@@ -15,6 +15,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <sys/mman.h>
+
 #include <json/value.h>
 #include <sys/file.h>
 #include <cstring>
@@ -372,6 +374,13 @@ int main(int argc, char** argv) {
     std::cerr << std::endl;
     printUsage();
     return 1;
+  }
+
+  if (mlockall(MCL_CURRENT | MCL_FUTURE) != 0) {
+    std::cerr << "mlock failed " << errno << " strerror = " << strerror(errno) << std::endl;
+    return 1;
+  } else {
+    std::cerr << "mlock successfull" << std::endl;
   }
 
   if (should_dump_stats) {
